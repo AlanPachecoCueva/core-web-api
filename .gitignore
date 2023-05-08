@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-node_modules
-=======
+ingweb-ap-firebase-adminsdk-yaj28-459f167cd9.json
+
 # Logs
 logs
 *.log
@@ -131,4 +130,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
->>>>>>> 8bb560fb39658634d3ad5825f2a6792cd1d5d51b
