@@ -1,13 +1,11 @@
-const { auth, db } = require('../firebase.js');
-
+const { db } = require('../firebase.js');
 
 
 async function createProject(author, teamName, name, description, teamMembers, estimatedEndDate) {
     try {
-        const newProject = { author, teamName, name, description, teamMembers, estimatedEndDate }
-        console.log("newProject: ", newProject);
-        // Actualizar el usuario en Firebase Authentication
 
+        /*------------------------FECHA------------------------ */
+        //Genera fecha actual
         let currentDate = new Date();
         let day = currentDate.getDate();
         let month = currentDate.getMonth() + 1;
@@ -20,7 +18,10 @@ async function createProject(author, teamName, name, description, teamMembers, e
         if (month < 10) {
             month = "0" + month;
         }
+
+        //Formatea la fecha generada
         let dateString = day + "/" + month + "/" + year;
+        /*------------------------FECHA------------------------ */
 
         db.collection('projects').add({
             author,
@@ -29,44 +30,24 @@ async function createProject(author, teamName, name, description, teamMembers, e
             description,
             teamMembers,
             estimatedEndDate,
-            estado: "Creado",
+            state: "Created",
             //Fecha actual
             startDate: dateString,
             //Valores iniciales que están vacíos
             realEndDate: "",
         })
             .then((docRef) => {
-                console.log("Proyecto creado con ID: ", docRef.id);
                 // Retornar un mensaje de éxito
-                return docRef.id;
-
+                return docRef;
             })
             .catch((error) => {
-                console.error("Error creando el proyecto: ", error);
                 throw error;
             });
 
     } catch (error) {
-        console.error('Error al crear proyecto:', error);
         throw error; // Lanzar el error para que sea capturado en el catch del enrutador
     }
 }
-
-//READ
-// async function getAllProjects() {
-//     try {
-//       // Obtener la colección de usuarios en Firestore
-//       const snapshot = await db.collection('projects').get();
-//       const projects = snapshot.docs.map(doc => doc.data());
-//       console.log('Proyectos obtenidos exitosamente:', projects);
-
-//       // Retornar la lista de usuarios
-//       return projects;
-//     } catch (error) {
-//       console.error('Error al obtener proyectos:', error);
-//       throw error; // Lanzar el error para que sea capturado en el catch del enrutador
-//     }
-//   }
 
 async function getAllProjects() {
     try {
@@ -76,55 +57,85 @@ async function getAllProjects() {
             // Agregar el ID del documento a los datos del proyecto
             return { id: doc.id, ...doc.data() };
         });
-        console.log('Proyectos obtenidos exitosamente:', projects);
 
         // Retornar la lista de proyectos
         return projects;
     } catch (error) {
-        console.error('Error al obtener proyectos:', error);
         throw error; // Lanzar el error para que sea capturado en el catch del enrutador
     }
 }
 
 async function getProject(id) {
     try {
-        // Verificar si se proporcionó un ID de usuario
-        if (!id) {
-            console.error('ID de proyecto no proporcionado');
-            return null;
-        }
-
         // Obtener el documento del usuario en Firestore mediante su ID
         const collectionRef = await db.collection('projects');
-        try {
-            const doc = await collectionRef.doc(id).get();
-            if (!doc.exists) {
-                console.log('No se encontró ningún proyecto con el ID proporcionado');
-                return null;
-            }
-            return doc.data();
-        } catch (error) {
-            console.error('Error al buscar el documento:', error);
-            return null;
+
+        const doc = await collectionRef.doc(id).get();
+        if (!doc.exists) {
+            throw error; // Lanzar el error para que sea capturado en el catch del enrutador
         }
+        return doc.data();
 
-
-        // // Verificar si se encontraron resultados
-        // if (!querySnapshot.empty) {
-        //     const projectDoc = querySnapshot.docs[0];
-        //     const project = projectDoc.data();
-        //     console.log('Proyecto obtenido exitosamente:', project);
-
-        //     // Retornar el usuario obtenido
-        //     return project;
-        // } else {
-        //     console.error('No se encontró el proyecto con el ID proporcionado:', id);
-        //     return null;
-        // }
     } catch (error) {
-        console.error('Error al obtener proyecto por ID:', error);
         throw error; // Lanzar el error para que sea capturado en el catch del enrutador
     }
 }
 
-module.exports = { createProject, getAllProjects, getProject };
+//Delete project
+async function deleteProject(id) {
+    try {
+        //Eliminar todas las tasks con un projectId equivalente al del proyecto que será eliminado
+        await db.collection('tasks').where("projectId", '==', id).get()
+            .then(snapshot => {
+                const batch = db.batch();
+                snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                return batch.commit();
+            })
+            .then(() => console.log(`All tasks with "projectId"=${id} are been deleted.`))
+            .catch(error => {console.error(`Error deleting tasks of project ${id}: ${error}`); throw error;});
+
+        // Eliminar el documento de Firestore
+        await db.collection('projects').doc(id).delete();
+
+
+        // Retornar un mensaje de éxito
+        return true;
+    } catch (error) {
+        throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+    }
+}
+
+// //UPDATE
+async function updateProject(id, description, state, estimatedEndDate, name, startDate, teamMembers, teamName) {
+    try {
+      const newProject = {
+        id,
+        description,
+        state,
+        estimatedEndDate,
+        name,
+        startDate,
+        teamMembers,
+        teamName,
+      } 
+  
+      // Actualizar el documento en Firestore para el usuario con los datos proporcionados
+      await db.collection('projects').doc(newProject.id).update({
+        description:newProject.description,
+        state:newProject.state,
+        estimatedEndDate:newProject.estimatedEndDate,
+        name:newProject.name,
+        startDate:newProject.startDate,
+        teamMembers:newProject.teamMembers,
+        teamName:newProject.teamName,
+      });
+  
+      // Retornar un mensaje de éxito
+      return newUser;
+    } catch (error) {
+      throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+    }
+  }
+  
+
+module.exports = { createProject, getAllProjects, getProject, deleteProject, updateProject };
