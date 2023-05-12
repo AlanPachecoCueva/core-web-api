@@ -74,7 +74,12 @@ async function getProject(id) {
         if (!doc.exists) {
             throw error; // Lanzar el error para que sea capturado en el catch del enrutador
         }
-        return doc.data();
+
+        // Obtener el objeto de datos y agregar el ID del documento
+        const data = doc.data();
+        data.id = doc.id;
+
+        return data;
 
     } catch (error) {
         throw error; // Lanzar el error para que sea capturado en el catch del enrutador

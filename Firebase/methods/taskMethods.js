@@ -75,6 +75,24 @@ async function createTask(
     }
 }
 
+async function getAllTasks() {
+    try {
+        const snapshot = await db.collection('tasks').get();
+
+        const tasks = [];
+        snapshot.forEach(doc => {
+            const task = doc.data();
+            task.id = doc.id;
+            tasks.push(task);
+        });
+
+        return tasks;
+    } catch (error) {
+        console.error('Error getting all tasks:', error);
+        throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+    }
+}
+
 async function getAllTasksOfProject(projectId) {
     try {
         const snapshot = await db.collection('tasks').where('projectId', '==', projectId).get();
@@ -88,7 +106,7 @@ async function getAllTasksOfProject(projectId) {
 
         return tasks;
     } catch (error) {
-        console.error('Error al obtener tareas del proyecto: ',projectId," | ", error);
+        console.error('Error al obtener tareas del proyecto: ', projectId, " | ", error);
         throw error; // Lanzar el error para que sea capturado en el catch del enrutador
     }
 }
@@ -109,7 +127,11 @@ async function getTask(id) {
                 console.log('No se encontró ninguna tarea con el ID proporcionado');
                 return null;
             }
-            return doc.data();
+
+            const data = doc.data();
+            data.id = doc.id;
+
+            return data;
         } catch (error) {
             console.error('Error al buscar el tarea:', error);
             return null;
@@ -120,4 +142,18 @@ async function getTask(id) {
     }
 }
 
-module.exports = { createTask, getAllTasksOfProject, getTask };
+
+//Delete task
+async function deleteTask(id) {
+    try {
+        // Eliminar el documento de Firestore
+        await db.collection('tasks').doc(id).delete();
+
+
+        // Retornar un mensaje de éxito
+        return true;
+    } catch (error) {
+        throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+    }
+}
+module.exports = { createTask, getAllTasksOfProject, getTask, getAllTasks, deleteTask };
