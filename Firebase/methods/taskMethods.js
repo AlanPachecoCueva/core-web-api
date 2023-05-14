@@ -156,4 +156,43 @@ async function deleteTask(id) {
         throw error; // Lanzar el error para que sea capturado en el catch del enrutador
     }
 }
-module.exports = { createTask, getAllTasksOfProject, getTask, getAllTasks, deleteTask };
+
+// //UPDATE
+async function updateTask(id, name, description, estimatedEndDate, members, objectives, state) {
+    try {
+        let result = null;
+        if (state == "Closed") {
+            // Setea la fecha de inicio como la fecha actual
+            let currentDate = new Date();
+            let day = currentDate.getDate();
+            let month = currentDate.getMonth() + 1;
+            let year = currentDate.getFullYear();
+
+            // Agrega un cero antes del número del día y mes si son menores a 10
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (month < 10) {
+                month = "0" + month;
+            }
+            let dateString = day + "/" + month + "/" + year;
+
+            // Actualizar el documento en Firestore para el task con los datos proporcionados
+            result = await db.collection('tasks').doc(id).update({
+                name, description, estimatedEndDate, members, objectives, state, endDate: dateString
+            });
+        } else {
+            // Actualizar el documento en Firestore para el task con los datos proporcionados
+            result = await db.collection('tasks').doc(id).update({
+                name, description, estimatedEndDate, members, objectives, state, endDate: ""
+            });
+        }
+
+
+        // Retornar un mensaje de éxito
+        return result;
+    } catch (error) {
+        throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+    }
+}
+module.exports = { createTask, getAllTasksOfProject, getTask, getAllTasks, deleteTask, updateTask };

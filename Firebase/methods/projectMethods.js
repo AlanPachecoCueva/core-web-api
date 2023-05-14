@@ -97,7 +97,7 @@ async function deleteProject(id) {
                 return batch.commit();
             })
             .then(() => console.log(`All tasks with "projectId"=${id} are been deleted.`))
-            .catch(error => {console.error(`Error deleting tasks of project ${id}: ${error}`); throw error;});
+            .catch(error => { console.error(`Error deleting tasks of project ${id}: ${error}`); throw error; });
 
         // Eliminar el documento de Firestore
         await db.collection('projects').doc(id).delete();
@@ -113,34 +113,34 @@ async function deleteProject(id) {
 // //UPDATE
 async function updateProject(id, description, state, estimatedEndDate, name, startDate, teamMembers, teamName) {
     try {
-      const newProject = {
-        id,
-        description,
-        state,
-        estimatedEndDate,
-        name,
-        startDate,
-        teamMembers,
-        teamName,
-      } 
-  
-      // Actualizar el documento en Firestore para el usuario con los datos proporcionados
-      await db.collection('projects').doc(newProject.id).update({
-        description:newProject.description,
-        state:newProject.state,
-        estimatedEndDate:newProject.estimatedEndDate,
-        name:newProject.name,
-        startDate:newProject.startDate,
-        teamMembers:newProject.teamMembers,
-        teamName:newProject.teamName,
-      });
-  
-      // Retornar un mensaje de éxito
-      return newUser;
+        const newProject = {
+            id,
+            description,
+            state,
+            estimatedEndDate,
+            name,
+            startDate,
+            teamMembers,
+            teamName,
+        }
+
+        // Actualizar el documento en Firestore para el usuario con los datos proporcionados
+        const result = await db.collection('projects').doc(newProject.id).update({
+            description: newProject.description,
+            state: newProject.state,
+            estimatedEndDate: newProject.estimatedEndDate,
+            name: newProject.name,
+            startDate: newProject.startDate,
+            teamMembers: newProject.teamMembers,
+            teamName: newProject.teamName,
+        });
+
+        // Retornar un mensaje de éxito
+        return result;
     } catch (error) {
-      throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+        throw error; // Lanzar el error para que sea capturado en el catch del enrutador
     }
-  }
-  
+}
+
 
 module.exports = { createProject, getAllProjects, getProject, deleteProject, updateProject };
