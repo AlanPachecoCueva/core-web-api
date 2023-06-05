@@ -2,7 +2,7 @@
 const admin = require('firebase-admin');
 
 // Ruta al archivo de configuración de Firebase (descargado desde la consola de Firebase)
-const rutaArchivoCredenciales = "../ingweb-ap-firebase-adminsdk-yaj28-459f167cd9.json";
+const rutaArchivoCredenciales = "../ingweb-ap-firebase-adminsdk-yaj28-b67f1e279b.json";
 
 // Configurar las credenciales de Firebase
 const credenciales = require(rutaArchivoCredenciales);

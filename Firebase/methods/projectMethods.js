@@ -49,6 +49,28 @@ async function createProject(author, teamName, name, description, teamMembers, e
     }
 }
 
+// async function deleteProjectById(projectId) {
+//     try {
+//       // Eliminar las tareas asociadas al proyecto
+//       const tasksSnapshot = await db.collection('tasks').where('projectId', '==', projectId).get();
+//       const batch = db.batch();
+  
+//       tasksSnapshot.forEach((doc) => {
+//         batch.delete(doc.ref);
+//       });
+  
+//       await batch.commit();
+  
+//       // Eliminar el proyecto
+//       const projectRef = db.collection('projects').doc(projectId);
+//       await projectRef.delete();
+  
+//       return true;
+//     }  catch (error) {
+//         throw error; // Lanzar el error para que sea capturado en el catch del enrutador
+//     }
+//   }
+
 async function getAllProjects() {
     try {
         // Obtener la colección de proyectos en Firestore
