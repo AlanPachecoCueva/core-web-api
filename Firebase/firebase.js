@@ -20,4 +20,4 @@ const storage = admin.storage(); // Obtener una instancia de Cloud Storage
 
 const auth = admin.auth();
 
-module.exports = {auth, db, storage};
+module.exports = {auth, db, storage, admin};
