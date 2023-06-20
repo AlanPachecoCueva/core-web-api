@@ -11,7 +11,8 @@ const {
   deleteTask,
   addComment,
   getCommentsByTaskId,
-  deleteComment
+  deleteComment,
+  updateTask
 } = require("../Firebase/methods/taskMethods.js");
 
 router.post("/create", async (req, res) => {

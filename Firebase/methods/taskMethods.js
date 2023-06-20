@@ -169,9 +169,10 @@ async function updateTask(
   state
 ) {
   try {
+    
     let result = null;
-    if (state == "Closed") {
-      // Setea la fecha de inicio como la fecha actual
+    if (state == "Done") {
+      // Setea la fecha de fin como la fecha actual
       let currentDate = new Date();
       let day = currentDate.getDate();
       let month = currentDate.getMonth() + 1;
