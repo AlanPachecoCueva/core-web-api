@@ -1,4 +1,5 @@
 const { db, admin } = require("../firebase.js");
+const { decryptText } = require("../Encryption Service/encryption-methods.js");
 
 async function createTask(
   projectId,
@@ -133,6 +134,9 @@ async function getTask(id) {
 
       const data = doc.data();
       data.id = doc.id;
+
+      //Para desencriptar la descripción de la tarea
+      data.description = await decryptText(data.description);
 
       return data;
     } catch (error) {

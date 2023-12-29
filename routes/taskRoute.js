@@ -1,6 +1,10 @@
 // Definir rutas para proyectos
 const express = require("express");
 const router = express.Router();
+const axios = require("axios");
+
+
+
 
 //Task methods
 const {
@@ -12,13 +16,15 @@ const {
   addComment,
   getCommentsByTaskId,
   deleteComment,
-  updateTask
+  updateTask,
 } = require("../Firebase/methods/taskMethods.js");
+
+const { encryptText } = require("../Firebase/Encryption Service/encryption-methods.js");
 
 router.post("/create", async (req, res) => {
   try {
     console.log("body: ", req.body);
-    const {
+    var {
       projectId,
       author,
       name,
@@ -28,6 +34,8 @@ router.post("/create", async (req, res) => {
       objectives,
     } = req.body;
 
+    //Cifrar antes de guardar
+    description = await encryptText(description);
     const task = await createTask(
       projectId,
       author,
@@ -46,7 +54,6 @@ router.post("/create", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    console.log("AWAWAWE");
     const tasks = await getAllTasksOfProject(req.params.id);
     console.log("Tasks: ", tasks);
     res.status(201).json(tasks);
