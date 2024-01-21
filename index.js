@@ -14,11 +14,15 @@ app.use(express.json());
 app.use('/users', usersRouter);
 
 
-
 // Importar el enrutador de proyectos
 const projectsRouter = require('./routes/projectRoute');
 // Usar el enrutador para las rutas de proyectos
 app.use('/projects', projectsRouter);
+
+// Importar el enrutador de usuarios
+const contactsRouter = require('./routes/contactsRoute');
+// Usar el enrutador para las rutas de usuarios
+app.use('/contacts', contactsRouter);
 
 
 // Importar el enrutador de tareas
